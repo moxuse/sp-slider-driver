@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "ofxTimer.h"
+#include "ofxXmlSettings.h"
 
 #define NUM_MSG_STRINGS 15
 
@@ -28,6 +29,7 @@ public:
   void stepTo(unsigned int distenation, unsigned char speed);
   
 private:
+  ofxXmlSettings settingXml;
   ofSerial  serial;
   
   bool      bSendSerialMessage;			// a flag for sending serial
@@ -39,6 +41,7 @@ private:
   ofTrueTypeFont		font;
   
   ofxOscReceiver reciver;
+  ofxOscSender sender;
   bool      run;
   bool      isReset;
   bool      busy;

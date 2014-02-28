@@ -1,20 +1,29 @@
 #include "testApp.h"
 
-#define RECIVE_PORT 5100
+#define LISTEN_PORT 5100
 #define SEND_PORT 5000
 #define BAUD_RATE 9600
+#define HOST_NAME "127.0.0.1"
 
 bool togBusyBlink = false;
 //--------------------------------------------------------------
 void testApp::setup(){
   current_msg_string = 0;
   
+  settingXml.loadFile("settings.xml");
+  
+  string portName = settingXml.getValue("settings:serial-port", "/dev/tty.usbmodem1411");
+  string hostName = settingXml.getValue("settings:host", HOST_NAME);
+  int baudRate = settingXml.getValue("settings:baud-rate", BAUD_RATE);
+  int listenPort = settingXml.getValue("settings:listen-port", LISTEN_PORT);
+  int sendPort = settingXml.getValue("settings:send-port", SEND_PORT);
   run = true;
   busy = false;
   serial.enumerateDevices();
-  serial.setup("/dev/tty.usbmodem1411", BAUD_RATE);
+  serial.setup(portName, baudRate);
   
-  reciver.setup( RECIVE_PORT );
+  reciver.setup(listenPort);
+  sender.setup(hostName, sendPort);
   
   nTimesRead = 0;
 	nBytesRead = 0;

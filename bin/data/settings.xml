@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--settings.xml-->
+<settings>
+
+  <serial-port>/dev/tty.usbmodem1411</serial-port>
+
+  <baud-rate>9600</baud-rate>
+
+  <host>127.0.0.1</host>
+
+  <send-port>5000</send-port>
+
+  <listen-port>5100</listen-port>
+
+</settings>
