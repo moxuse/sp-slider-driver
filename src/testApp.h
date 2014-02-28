@@ -5,7 +5,7 @@
 #include "ofxTimer.h"
 #include "ofxXmlSettings.h"
 
-#define NUM_MSG_STRINGS 15
+#define NUM_MSG_STRINGS 8
 
 class testApp : public ofBaseApp{
 
@@ -23,8 +23,6 @@ public:
   void windowResized(int w, int h);
   void dragEvent(ofDragInfo dragInfo);
   void gotMessage(ofMessage msg);
-
-  void proceedLevel( int upDown , int _nextLevel );
   void reset();
   void stepTo(unsigned int distenation, unsigned char speed);
   
@@ -42,7 +40,7 @@ private:
   
   ofxOscReceiver reciver;
   ofxOscSender sender;
-  bool      run;
+  
   bool      isReset;
   bool      busy;
   

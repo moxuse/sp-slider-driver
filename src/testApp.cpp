@@ -17,12 +17,14 @@ void testApp::setup(){
   int baudRate = settingXml.getValue("settings:baud-rate", BAUD_RATE);
   int listenPort = settingXml.getValue("settings:listen-port", LISTEN_PORT);
   int sendPort = settingXml.getValue("settings:send-port", SEND_PORT);
-  run = true;
+
   busy = false;
+  isReset = false;
   serial.enumerateDevices();
   serial.setup(portName, baudRate);
   
   reciver.setup(listenPort);
+
   sender.setup(hostName, sendPort);
   
   nTimesRead = 0;
@@ -45,42 +47,33 @@ void testApp::update(){
     msg_strings[i] = "";
 	}
   
-  while ( reciver.hasWaitingMessages() ) {
+  while (reciver.hasWaitingMessages() ) {
     string msg_string;
     ofxOscMessage m;
     reciver.getNextMessage( &m );
     
-    if( "/up" == m.getAddress() ) {
+    if("/step" == m.getAddress()) {
+      
       if( false == busy ) {
-        int nextLevel = m.getArgAsInt32(0);
+        cout << "recieved osc....."<< endl;
+        int destinationValue = m.getArgAsInt32(0);
+        int speedVlue = m.getArgAsInt32(1);
+        stepTo(destinationValue, speedVlue);
         busy = true;
-        proceedLevel( 0, nextLevel );
-        if( !run ){
-          cout << "recived OSC message but not running flag.." << endl;
-        }
         
-        msg_string += "Message Recived : /up :" ;
-        msg_string += ofToString( nextLevel );
+        msg_string += "Messag Step :" + ofToString(destinationValue) + " speed: " + ofToString(speedVlue);
       }
-    } else if( "/down" == m.getAddress() ){
+    } else if( "/reset" == m.getAddress() ){
       if( false == busy ) {
-        int nextLevel = m.getArgAsInt32(0);
+        reset();
         busy = true;
-        proceedLevel( 1, nextLevel );
-        if( !run ){
-          cout << "recived OSC message but not running flag.." << endl;
-        }
-        
-        msg_string += "Message Recived : /down :" ;
-        msg_string += ofToString( nextLevel );
+        msg_string += "Message Reset..." ;
       }
     }
     
     // add to the list of strings to display
     msg_strings[current_msg_string] = msg_string;
     current_msg_string = (current_msg_string + 1) % NUM_MSG_STRINGS;
-    // clear the next line
-    msg_strings[current_msg_string] = "";
     
   }
   
@@ -137,17 +130,7 @@ void testApp::draw(){
   
   ofBackground(0);
   
-	// draw mouse state
-  ofPushStyle();
-  ofSetColor(255, 255, 255);
-  
-	for(int i = 0; i < NUM_MSG_STRINGS; i++){
-		ofDrawBitmapString(msg_strings[i], 430, 15 + 15 * i);
-	}
-  
-  ofPopStyle();
-  
-  if (nBytesRead > 0 && ((ofGetElapsedTimef() - readTime) < 0.5f)){
+  if (nBytesRead > 0 && ((ofGetElapsedTimef() - readTime) < 0.125f)){
 		ofSetColor(0);
 	} else {
 		ofSetColor(220);
@@ -159,44 +142,15 @@ void testApp::draw(){
 	msg += "nTimes read " + ofToString(nTimesRead) + "\n";
 	msg += "read packet : " + ofToString(bytesReadString) + "\n";
 	msg += "(time to pass : " + ofToString(readTime, 3) + ")";
-	font.drawString(msg, 10, 100);
+	font.drawString(msg, 10, 30);
+  
+  ofSetColor(255, 255, 255);
+  
+	for(int i = 0; i < NUM_MSG_STRINGS; i++){
+    font.drawString(msg_strings[i], 10, 185 + 15 * i);
+	}
+
 }
-
-
-//--------------------------------------------------------------
-void testApp::proceedLevel( int upDown , int _nextLevel ) {
-  if( run ){
-    int next = _nextLevel;
-    if( 9999 != next  && -1 < next ){ //in case error 9999
-      
-      
-      if( next >= 0 ) {
-        
-        if( 0 == upDown ){
-          unsigned char buf[3] = "XF";
-          serial.writeBytes( buf , sizeof(buf) / sizeof(buf[0]) );
-          
-        } else if ( 1 == upDown ) {
-          unsigned char buf[3] = "XB";
-          serial.writeBytes( buf , sizeof(buf) / sizeof(buf[0]) );
-          
-        }
-
-      } else {
-        busy = false;
-      }
-      
-      
-    } else {
-      reset();
-      
-    }
-  } else {
-    busy = false;
-  }
-};
-
-
 
 //--------------------------------------------------------------
 void testApp::reset() {
@@ -225,9 +179,6 @@ void testApp::reset() {
   bSendSerialMessage = true;
 };
 
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
 
 //--------------------------------------------------------------
 void testApp::stepTo(unsigned int distenation, unsigned char speed) {
@@ -260,13 +211,13 @@ void testApp::keyPressed(int key){
   unsigned char buf[7];
   unsigned int distenation;
   if(key == '1'){
-    stepTo(120, 1);
+    stepTo(120, 12);
   } else if(key == '2') {
-    stepTo(220, 5);
+    stepTo(220, 125);
   } else if(key == '3') {
-    stepTo(1200, 2);
+    stepTo(1200, 23);
   } else if(key == '4') {
-    stepTo(1310, 1);
+    stepTo(1310, 420);
   } else if(key == '0') {
     reset();
   }
