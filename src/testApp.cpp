@@ -241,24 +241,7 @@ void testApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
-  unsigned char buf[7];
-  unsigned int distenation = 1200;
-  unsigned char h_dist = (unsigned char)(distenation >> 8);
-  unsigned char l_dist = (unsigned char)(distenation % 256);
-
-  buf[0] = 'x';
-  buf[1] = 'x';
-  buf[2] = 'f';
-  buf[3] = 143;
-  buf[4] = h_dist;
-  buf[5] = l_dist;
-  buf[6] = '\n';
   
-  int hvoer =((int)h_dist * 256 + (int)l_dist);
-  cout << (int)buf[4] << " "  << (int)buf[5] << " " << hvoer <<endl;
-  
-  serial.writeBytes( buf , sizeof(buf) / sizeof(buf[0]) );
-  bSendSerialMessage = true;
 }
 
 //--------------------------------------------------------------
