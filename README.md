@@ -48,7 +48,7 @@ PIN No.／ケーブル色／機能／Arduino Pin No.
 
 ステップまで移動
 
-```/reset```
+```/reset  ```
 
 原点回帰
 
