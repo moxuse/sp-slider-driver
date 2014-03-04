@@ -55,17 +55,17 @@ PIN No.／ケーブル色／機能／Arduino Pin No.
 
 ####受信
 
-```/limit_near```
+```/limit_near ```
 
 リミット検知、原点
 
 
-```/limit_far```
+```/limit_far ```
 
 リミット検知、端点
 
 
-```/redy```
+```/redy ```
 
 移動／原点回帰終了
 
