@@ -206,6 +206,28 @@ void testApp::stepTo(unsigned int distenation, unsigned char speed) {
 };
 
 //--------------------------------------------------------------
+void testApp::sendMsg(osc_messagee_type type) {
+  ofxOscMessage message;
+  switch (type) {
+    case 0:
+      message.setAddress("/ready");
+      message.addIntArg(currentPosition);
+      break;
+    case 1:
+      message.setAddress("/limit_near");
+      break;
+    case 2:
+      message.setAddress("/limit_far");
+      break;
+    default:
+      break;
+  };
+  
+  sender.sendMessage(message);
+  cout << "sendmsg.." << endl;
+}
+
+//--------------------------------------------------------------
 void testApp::keyPressed(int key){
   
   unsigned char buf[7];
@@ -221,7 +243,12 @@ void testApp::keyPressed(int key){
   } else if(key == '0') {
     reset();
   }
-
+  
+  if ('r' == key) {
+    sendMsg(ready);
+  } else if ('l' == key) {
+    sendMsg(limit_far);
+  }
 }
 
 //--------------------------------------------------------------

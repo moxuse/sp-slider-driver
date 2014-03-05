@@ -7,7 +7,13 @@
 
 #define NUM_MSG_STRINGS 8
 
-class testApp : public ofBaseApp{
+enum osc_messagee_type {
+  ready = 0,
+  limit_near = 1,
+  limit_far = 2
+};
+
+class testApp : public ofBaseApp {
 
 public:
   void setup();
@@ -25,6 +31,7 @@ public:
   void gotMessage(ofMessage msg);
   void reset();
   void stepTo(unsigned int distenation, unsigned char speed);
+  void sendMsg(osc_messagee_type type);
   
 private:
   ofxXmlSettings settingXml;
@@ -47,6 +54,6 @@ private:
   int       current_msg_string;
   string    msg_strings[NUM_MSG_STRINGS];
   
-  int       currentPosition;
+  unsigned int       currentPosition;
   string    currentStatus;
 };
