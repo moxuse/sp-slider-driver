@@ -17,6 +17,8 @@ void testApp::setup(){
   int baudRate = settingXml.getValue("settings:baud-rate", BAUD_RATE);
   int listenPort = settingXml.getValue("settings:listen-port", LISTEN_PORT);
   int sendPort = settingXml.getValue("settings:send-port", SEND_PORT);
+  
+  cout << "host : "<< hostName <<"listen port at: "<<listenPort << "sendport at: "<< sendPort<<endl;
 
   busy = false;
   isReset = false;
@@ -99,15 +101,25 @@ void testApp::update(){
 		memcpy(bytesReadString, bytesReturned, 6);
     if ('X' == bytesReturned[0] && 'X' == bytesReturned[1]) {
       unsigned char stateByte = bytesReturned[2];
-      if ('N' == stateByte) {
+      if ('C' == stateByte) {
         cout << "status normal" << endl;
+        int h_pos = (unsigned int) bytesReturned[3];
+        int l_pos = (unsigned int) bytesReturned[4];
+        currentPosition = h_pos * 256 + l_pos;
+        sendMsg(READY);
+      } else if ('N' ==stateByte) {
+        cout << "--------- status LIMIT NEAR------" << endl;
+        int h_pos = (unsigned int) bytesReturned[3];
+        int l_pos = (unsigned int) bytesReturned[4];
+        currentPosition = h_pos * 256 + l_pos;
+        sendMsg(LIMIT_NEAR);
       } else if ('F' ==stateByte) {
-        cout << "--------- status LIMIT ------" << endl;
-      }
-      int h_pos = (unsigned int) bytesReturned[3];
-      int l_pos = (unsigned int) bytesReturned[4];
-      currentPosition = h_pos * 256 + l_pos;
-      
+        cout << "--------- status LIMIT FAR------" << endl;
+        int h_pos = (unsigned int) bytesReturned[3];
+        int l_pos = (unsigned int) bytesReturned[4];
+        currentPosition = h_pos * 256 + l_pos;
+        sendMsg(LIMIT_FAR);
+      };  
       cout << currentPosition << endl;
       bSendSerialMessage = false;
       busy = false;
@@ -215,9 +227,11 @@ void testApp::sendMsg(osc_messagee_type type) {
       break;
     case 1:
       message.setAddress("/limit_near");
+      message.addIntArg(currentPosition);
       break;
     case 2:
       message.setAddress("/limit_far");
+      message.addIntArg(currentPosition);
       break;
     default:
       break;
@@ -235,20 +249,15 @@ void testApp::keyPressed(int key){
   if(key == '1'){
     stepTo(120, 12);
   } else if(key == '2') {
-    stepTo(220, 125);
+    stepTo(220, 25);
   } else if(key == '3') {
-    stepTo(1200, 23);
+    stepTo(1200, 3);
   } else if(key == '4') {
-    stepTo(1310, 420);
+    stepTo(1310, 20);
   } else if(key == '0') {
     reset();
   }
-  
-  if ('r' == key) {
-    sendMsg(ready);
-  } else if ('l' == key) {
-    sendMsg(limit_far);
-  }
+
 }
 
 //--------------------------------------------------------------

@@ -103,10 +103,10 @@ void loop() {
            doReset();
          }
          if (limitNear) {
-           writeLimit(1);
+           writeLimit('1');
          };
          if (limitFar) {
-           writeLimit(2);
+           writeLimit('2');
          };
          digitalWrite(currentPin, LOW);
          delay(100);
@@ -118,7 +118,7 @@ void loop() {
          lcd.print(currentPos, DEC) ;
          
          busy = false;
-         if (!limitNear && !limitNear) {
+         if (!limitNear && !limitFar) {
            writeCurrentStepToSerial(currentStep);
          };
          if (limitNear) { limitNear = false; };
@@ -176,24 +176,50 @@ void writeCurrentStepToSerial(long pos) {
   unsigned char l_dist = (unsigned char)(sendPos % 256);
   Serial.write('X');
   Serial.write('X');
-  Serial.write('N');
+  Serial.write('C');
   Serial.write(h_dist);
   Serial.write(l_dist);
   Serial.write('\n');
 }
 
-void writeLimit(int state) {
+void writeCurrentLimitToSerial(long pos, char dir) {
+  unsigned char limit_command;
+  unsigned int sendPos  = (unsigned int)(pos / 100);
+  unsigned char h_dist = (unsigned char)(sendPos >> 8);
+  unsigned char l_dist = (unsigned char)(sendPos % 256);
+  switch (dir) {
+    case '0':
+      limit_command = 'N';
+      break;
+    case '1':
+      limit_command = 'F';
+      break;
+    default:
+      limit_command = 'N';
+      break;
+  };
+  Serial.write('X');
+  Serial.write('X');
+  Serial.write(limit_command);
+  Serial.write(h_dist);
+  Serial.write(l_dist);
+  Serial.write('\n');
+}
+
+void writeLimit(char state) {
   String stateStr;
   switch (state) {
-    case 1:
+    case '1':
       stateStr = "LIMIT NEAR...";
-      writeCurrentStepToSerial(0);
+      writeCurrentLimitToSerial(0, '0');
+      driverReturn('N');
       currentStep = 0;
       currentPos = 0;
       break;
-    case 2:
+    case '2':
       stateStr = "LIMIT FAR...";
-      writeCurrentStepToSerial(currentStep);
+      writeCurrentLimitToSerial(currentStep, '1');
+      driverReturn('F');
       break;
     default:
       break;
@@ -213,18 +239,31 @@ void doReset() {
         break;
      };
    };
-   digitalWrite(currentPin, HIGH);
-   digitalWrite(directPin, LOW);
-   int idleCount = 0;
-   for (idleCount = 0 ; idleCount < 1000; idleCount++) {
+   currentPos = 0;
+   currentStep = 0;
+   writeCurrentStepToSerial(currentStep);
+}
+
+void driverReturn (int dir) {
+  delay(10);
+  switch(dir) {
+    case 'N':
+     digitalWrite(currentPin, HIGH);
+     digitalWrite(directPin, LOW);
+     break;
+    case 'F':
+     digitalWrite(currentPin, HIGH);
+     digitalWrite(directPin, HIGH);
+    default:
+    break;
+  };
+
+   for (int idleCount = 0 ; idleCount < 1000; idleCount++) {
      digitalWrite(pulsePin, HIGH);
      delayMicroseconds(400);
      digitalWrite(pulsePin, LOW);
      delayMicroseconds(400);
    };
-   currentPos = 0;
-   currentStep = 0;
-   writeCurrentStepToSerial(currentStep);
 }
 
 // LCD character writer

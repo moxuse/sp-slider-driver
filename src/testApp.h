@@ -8,9 +8,9 @@
 #define NUM_MSG_STRINGS 8
 
 enum osc_messagee_type {
-  ready = 0,
-  limit_near = 1,
-  limit_far = 2
+  READY = 0,
+  LIMIT_NEAR = 1,
+  LIMIT_FAR = 2
 };
 
 class testApp : public ofBaseApp {
