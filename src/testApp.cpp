@@ -60,6 +60,13 @@ void testApp::update(){
         cout << "recieved osc....."<< endl;
         int destinationValue = m.getArgAsInt32(0);
         int speedVlue = m.getArgAsInt32(1);
+        
+        if (0 > destinationValue) {destinationValue = 0;};
+        if (1640 < destinationValue) {destinationValue = 1640;};
+        
+        if (1 > speedVlue){speedVlue = 1;};
+        if (255 < speedVlue){speedVlue = 255;};
+        
         stepTo(destinationValue, speedVlue);
         busy = true;
         
@@ -119,7 +126,7 @@ void testApp::update(){
         int l_pos = (unsigned int) bytesReturned[4];
         currentPosition = h_pos * 256 + l_pos;
         sendMsg(LIMIT_FAR);
-      };  
+      };
       cout << currentPosition << endl;
       bSendSerialMessage = false;
       busy = false;
