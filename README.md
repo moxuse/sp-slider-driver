@@ -44,28 +44,36 @@ PIN No.／ケーブル色／機能／Arduino Pin No.
 
 ####送信
 
-```/step -I [目標ステップ]```
+```/step [目標ステップ 0~1640] [回転スピード 0~255] ```
+
+ex.
+
+``` NetAddr("localhost",5100).sendMsg("/step", 1640, 20) ```
 
 ステップまで移動
 
 ```/reset  ```
+
+ex.
+
+```NetAddr("localhost",5100).sendMsg("/reset") ```
 
 原点回帰
 
 
 ####受信
 
-```/limit_near ```
+```/limit_near [現在ステップ] ```
 
 リミット検知、原点
 
 
-```/limit_far ```
+```/limit_far [現在ステップ] ```
 
 リミット検知、端点
 
 
-```/redy ```
+```/redy [現在ステップ] ```
 
 移動／原点回帰終了
 
