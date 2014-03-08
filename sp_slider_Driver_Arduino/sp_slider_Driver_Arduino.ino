@@ -1,4 +1,4 @@
-#include <LiquidCrystal.h>
+//#include <LiquidCrystal.h>
 #include <math.h>
 #define STEP_REQUEST_BYTE 'x'
 
@@ -19,9 +19,9 @@ unsigned int currentPos = 0;
 unsigned long count = 0;
 long currentStep = 0;
 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+//LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
-static FILE lcdout = {0};// LCD FILE structure
+//static FILE lcdout = {0};// LCD FILE structure
 
 void setup() {
   pinMode(pulsePin, OUTPUT);
@@ -31,9 +31,9 @@ void setup() {
   pinMode(limitFarPin, INPUT);
   pinMode(pulseCountPin, INPUT);
   
-  lcd.begin(16, 2);
-  fdev_setup_stream (&lcdout, lcd_putchar, NULL, _FDEV_SETUP_WRITE);
-  lcd.print("sp-slider motor diver");
+  //lcd.begin(16, 2);
+  //fdev_setup_stream (&lcdout, lcd_putchar, NULL, _FDEV_SETUP_WRITE);
+  //lcd.print("sp-slider motor diver");
    
   Serial.begin( 9600 );
   
@@ -111,11 +111,11 @@ void loop() {
          digitalWrite(currentPin, LOW);
          delay(100);
          
-         lcd.clear();
-         lcd.setCursor(0, 0);
-         lcd.write("current pos");
-         lcd.setCursor(0, 1);
-         lcd.print(currentPos, DEC) ;
+//         lcd.clear();
+//         lcd.setCursor(0, 0);
+//         lcd.write("current pos");
+//         lcd.setCursor(0, 1);
+//         lcd.print(currentPos, DEC) ;
          
          busy = false;
          if (!limitNear && !limitFar) {
@@ -225,11 +225,11 @@ void writeLimit(char state) {
       break;
   }
 
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print(stateStr);
-  lcd.setCursor(0, 1);
-  lcd.print("") ;
+//  lcd.clear();
+//  lcd.setCursor(0, 0);
+//  lcd.print(stateStr);
+//  lcd.setCursor(0, 1);
+//  lcd.print("") ;
 }
 
 void doReset() {
@@ -267,10 +267,10 @@ void driverReturn (int dir) {
 }
 
 // LCD character writer
-static int lcd_putchar(char ch, FILE* stream) {
-  lcd.write(ch);
-  return (0);
-}
+//static int lcd_putchar(char ch, FILE* stream) {
+//  lcd.write(ch);
+//  return (0);
+//}
 
 /*
 白 GND
