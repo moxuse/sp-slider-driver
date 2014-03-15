@@ -71,7 +71,7 @@ void loop() {
          
          if (targetPos > currentPos) {
            digitalWrite(currentPin, HIGH);
-           digitalWrite(directPin, LOW);
+           digitalWrite(directPin, HIGH);
            while (count < distCount) {
              busy = true;
              int state = pulse(speedDelay, 0);
@@ -85,7 +85,7 @@ void loop() {
            }
          } else {
            digitalWrite(currentPin, HIGH);
-           digitalWrite(directPin, HIGH);
+           digitalWrite(directPin, LOW);
            while (count < distCount) {
              busy = true;
              int state = pulse(speedDelay, 1);
@@ -249,11 +249,11 @@ void driverReturn (int dir) {
   switch(dir) {
     case 'N':
      digitalWrite(currentPin, HIGH);
-     digitalWrite(directPin, LOW);
+     digitalWrite(directPin, HIGH);
      break;
     case 'F':
      digitalWrite(currentPin, HIGH);
-     digitalWrite(directPin, HIGH);
+     digitalWrite(directPin, LOW);
     default:
     break;
   };
