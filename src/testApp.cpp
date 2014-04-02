@@ -56,7 +56,7 @@ void testApp::update(){
     
     if("/step" == m.getAddress()) {
       
-      if( false == busy ) {
+      //if( false == busy ) {
         cout << "recieved osc....."<< endl;
         int destinationValue = m.getArgAsInt32(0);
         int speedVlue = m.getArgAsInt32(1);
@@ -71,7 +71,7 @@ void testApp::update(){
         busy = true;
         
         msg_string += "Messag Step :" + ofToString(destinationValue) + " speed: " + ofToString(speedVlue);
-      }
+      //}
     } else if( "/reset" == m.getAddress() ){
       if( false == busy ) {
         reset();
